@@ -1,0 +1,9 @@
+{
+  "name": "Debt Destroyer",
+  "short_name": "Debt Destroyer",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F5F7FA",
+  "theme_color": "#102A43",
+  "description": "A simple debt payoff and budgeting planner."
+}
