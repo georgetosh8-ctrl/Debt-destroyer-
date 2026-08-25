@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#102A43">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Debt Destroyer</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--navy:#102A43;--blue:#2672B9;--bg:#F5F7FA;--card:#fff;--text:#172B3A;--muted:#708090;--green:#16803A;--red:#C62828;--gold:#FFF3BF;--line:#D9E1E8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+header{background:linear-gradient(145deg,#102A43,#1F557D);color:white;padding:calc(18px + env(safe-area-inset-top)) 18px 18px;position:sticky;top:0;z-index:10}
+header .top{display:flex;align-items:center;justify-content:space-between}h1{margin:0;font-size:27px}header p{margin:4px 0 0;color:#D8E6F0;font-size:13px}
+header button{background:#ffffff20;border:1px solid #ffffff40;color:white;border-radius:10px;padding:8px 10px}
+nav{display:flex;gap:7px;padding:10px 12px;background:white;border-bottom:1px solid var(--line);overflow:auto;position:sticky;top:91px;z-index:9}
+nav button{border:0;background:#EEF2F6;color:#4D6070;border-radius:20px;padding:9px 14px;font-weight:750;white-space:nowrap}nav button.active{background:var(--blue);color:white}
+main{max-width:720px;margin:auto;padding:14px 14px 40px}.page{display:none}.page.active{display:block}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:var(--card);border:1px solid #E8EDF2;border-radius:17px;padding:15px;box-shadow:0 5px 18px #102A4309}.label{font-size:11px;text-transform:uppercase;color:var(--muted);font-weight:800;letter-spacing:.5px}.metric{font-size:23px;font-weight:850;margin-top:6px}.section{margin:20px 0 10px;font-size:19px}
+.inputcard{background:var(--gold);border:1px solid #E8D477;border-radius:15px;padding:14px;margin-bottom:10px}label{display:block;font-size:12px;font-weight:800;color:#61717F;margin:8px 0 5px}
+input{width:100%;border:1px solid #C8D2DC;border-radius:10px;padding:11px 12px;background:white;font-size:16px;color:var(--text)}
+.row{display:grid;grid-template-columns:1.3fr 1fr;gap:9px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.primary,.secondary,.danger{cursor:pointer}.primary{border:0;border-radius:11px;background:var(--blue);color:white;padding:12px 15px;font-weight:800;font-size:15px}.secondary{border:1px solid #C9D5DF;background:white;color:var(--text);border-radius:11px;padding:11px 14px;font-weight:750}.danger{border:0;background:#FDE7E7;color:var(--red);border-radius:9px;padding:8px 10px;font-weight:750}
+.progress{height:12px;background:#E6EBEF;border-radius:99px;overflow:hidden}.progress>div{height:100%;background:var(--green)}.small{font-size:12px;color:var(--muted);line-height:1.45}.positive{color:var(--green)}.negative{color:var(--red)}
+.item{background:white;border:1px solid #E4E9EE;border-radius:14px;padding:12px;margin:9px 0}.itemhead{display:flex;align-items:center;justify-content:space-between;gap:8px}.itemtitle{font-weight:800}.empty{text-align:center;padding:28px 15px;color:var(--muted);background:white;border-radius:14px}
+.hero{background:linear-gradient(145deg,#163B59,#2672B9);color:white;border-radius:18px;padding:18px}.hero .big{font-size:34px;font-weight:900}.hero p{color:#DCEAF4;margin:5px 0 0}.toggle{display:flex;background:#E9EEF3;border-radius:11px;padding:3px}.toggle button{flex:1;border:0;background:transparent;border-radius:9px;padding:9px;font-weight:800}.toggle .on{background:white;box-shadow:0 1px 4px #0002}
+footer{text-align:center;padding:25px;color:#8A97A2;font-size:11px}@media(max-width:430px){.row3{grid-template-columns:1fr 1fr}.metric{font-size:20px}}
+</style>
+</head>
+<body>
+<header><div class="top"><div><h1>Debt Destroyer</h1><p>Turn debt into a plan.</p></div><button id="resetBtn">Reset</button></div></header>
+<nav id="nav">
+<button class="active" data-page="home">Home</button><button data-page="debts">Debts</button><button data-page="budget">Budget</button><button data-page="planner">Planner</button><button data-page="goals">Goals</button>
+</nav>
+<main>
+<section id="home" class="page active">
+<div class="hero"><div class="label" style="color:#CFE2F0">Current debt</div><div class="big" id="heroDebt">£0</div><p id="heroLine">Add your debts to build your plan.</p></div>
+<div class="grid" style="margin-top:10px">
+<div class="card"><div class="label">Monthly debt</div><div class="metric" id="mPay">£0</div></div>
+<div class="card"><div class="label">Cash after debt</div><div class="metric" id="mCash">£0</div></div>
+<div class="card"><div class="label">Progress</div><div class="metric" id="mProg">0%</div></div>
+<div class="card"><div class="label">Debt-free</div><div class="metric" id="mDate">—</div></div>
+</div>
+<h2 class="section">Your progress</h2><div class="card"><div class="progress"><div id="bar" style="width:0"></div></div><p class="small" id="progressText">Set your starting debt to track progress.</p></div>
+<h2 class="section">Quick actions</h2><div class="grid">
+<button class="primary quick" data-page="debts">Add debt</button><button class="secondary quick" data-page="budget">Set budget</button>
+<button class="secondary quick" data-page="planner">Run a plan</button><button class="secondary quick" data-page="goals">Add goal</button>
+</div>
+</section>
+
+<section id="debts" class="page"><h2 class="section">Debt tracker</h2>
+<div class="inputcard"><label>Starting total debt</label><input id="starting" type="number" min="0" step=".01" placeholder="e.g. 7500"><p class="small">Enter this once to track how much you've paid off.</p><button class="primary" id="saveStarting">Save starting debt</button></div>
+<div id="debtsList"></div><button class="primary" id="addDebt">＋ Add debt</button>
+</section>
+
+<section id="budget" class="page"><h2 class="section">Monthly budget</h2>
+<div class="inputcard"><label>Take-home income</label><input id="income" type="number" min="0" step=".01"></div>
+<div id="expensesList"></div><button class="primary" id="addExpense">＋ Add expense</button>
+<div class="card" style="margin-top:12px"><div class="grid">
+<div><div class="label">Income</div><div class="metric" id="bIncome">£0</div></div><div><div class="label">Expenses</div><div class="metric" id="bExp">£0</div></div>
+<div><div class="label">Before debt</div><div class="metric" id="bBefore">£0</div></div><div><div class="label">After debt</div><div class="metric" id="bAfter">£0</div></div>
+</div></div>
+</section>
+
+<section id="planner" class="page"><h2 class="section">Payoff planner</h2>
+<div class="card"><div class="label">Strategy</div><div class="toggle" style="margin-top:7px"><button id="avBtn" class="on">Avalanche</button><button id="snBtn">Snowball</button></div><p class="small" id="strategyText"></p></div>
+<div class="inputcard"><label>Extra payment each month</label><input id="extraPlan" type="number" min="0" step=".01"><p class="small">Try £25, £50 or £100.</p></div>
+<div class="hero"><div class="label" style="color:#CFE2F0">Estimated payoff</div><div class="big" id="planDate">—</div><p id="planMonths">Add debt balances, APRs and payments first.</p></div>
+<div class="card" style="margin-top:10px"><div class="label">Monthly payment used</div><div class="metric" id="planPayment">£0</div></div>
+</section>
+
+<section id="goals" class="page"><h2 class="section">Savings goals</h2><div id="goalsList"></div><button class="primary" id="addGoal">＋ Add goal</button></section>
+</main>
+<footer>Debt Destroyer • Your data is saved on this device. Planning estimates only, not financial advice.</footer>
+
+<script>
+'use strict';
+const KEY='dd_v2_fixed';
+let strategy='avalanche';
+let data=load();
+
+function load(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(KEY)||'null');
+    return saved&&typeof saved==='object'?saved:{starting:0,income:0,debts:[],expenses:[],goals:[],extraPlan:0};
+  }catch(e){return {starting:0,income:0,debts:[],expenses:[],goals:[],extraPlan:0};}
+}
+const money=n=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(n)||0);
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function persist(){
+  try{localStorage.setItem(KEY,JSON.stringify(data));return true;}
+  catch(e){console.warn('Debt Destroyer storage error',e);return false;}
+}
+function go(page){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  const target=document.getElementById(page);
+  if(target)target.classList.add('active');
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===page));
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('#nav button,.quick').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
+
+function monthsFor(extra=0,mode=strategy){
+  let debts=data.debts.filter(d=>Number(d.balance)>0).map(d=>({b:Number(d.balance)||0,r:(Number(d.apr)||0)/100,p:(Number(d.payment)||0)+(Number(d.extra)||0)}));
+  const payment=debts.reduce((x,d)=>x+d.p,0)+Number(extra||0);
+  if(!debts.length||payment<=0)return null;
+  for(let m=1;m<=360;m++){
+    debts.forEach(d=>{d.b+=d.b*d.r/12;});
+    debts.sort(mode==='snowball'?(a,b)=>a.b-b.b:(a,b)=>b.r-a.r);
+    let left=payment;
+    for(const d of debts){const p=Math.min(d.b,left);d.b-=p;left-=p;}
+    if(debts.reduce((x,d)=>x+d.b,0)<0.01)return m;
+  }
+  return null;
+}
+function finishDate(m){
+  if(!m)return '—';
+  const d=new Date();d.setMonth(d.getMonth()+m);
+  return d.toLocaleDateString('en-GB',{month:'short',year:'numeric'});
+}
+
+function renderHome(){
+  const debt=data.debts.reduce((x,d)=>x+Number(d.balance||0),0);
+  const pay=data.debts.reduce((x,d)=>x+Number(d.payment||0)+Number(d.extra||0),0);
+  const exp=data.expenses.reduce((x,e)=>x+Number(e.amount||0),0);
+  const cash=Number(data.income||0)-exp-pay;
+  const pct=data.starting?Math.max(0,Math.min(100,(1-debt/data.starting)*100)):0;
+  const m=monthsFor();
+  document.getElementById('heroDebt').textContent=money(debt);
+  document.getElementById('mPay').textContent=money(pay);
+  const cashEl=document.getElementById('mCash');cashEl.textContent=money(cash);cashEl.className='metric '+(cash>=0?'positive':'negative');
+  document.getElementById('mProg').textContent=Math.round(pct)+'%';
+  document.getElementById('bar').style.width=pct+'%';
+  document.getElementById('mDate').textContent=finishDate(m);
+  document.getElementById('progressText').textContent=data.starting?money(Math.max(0,data.starting-debt))+' paid off from your starting debt.':'Set your starting debt to track progress.';
+  document.getElementById('heroLine').textContent=data.debts.length?data.debts.length+' debt'+(data.debts.length===1?'':'s')+' • '+finishDate(m)+' estimated finish':'Add your debts to build your plan.';
+}
+
+function renderDebts(){
+  document.getElementById('starting').value=data.starting||'';
+  const el=document.getElementById('debtsList');
+  if(!data.debts.length){el.innerHTML='<div class="empty">No debts yet. Tap Add debt to start.</div>';return;}
+  el.innerHTML=data.debts.map((d,i)=>'<div class="item"><div class="itemhead"><div class="itemtitle">'+(esc(d.name)||'New debt')+'</div><button class="danger" data-del-debt="'+i+'">Delete</button></div><div class="row"><div><label>Creditor</label><input data-debt="'+i+'" data-key="name" value="'+esc(d.name)+'"></div><div><label>Balance</label><input type="number" data-debt="'+i+'" data-key="balance" value="'+Number(d.balance||0)+'"></div></div><div class="row3"><div><label>APR %</label><input type="number" step=".1" data-debt="'+i+'" data-key="apr" value="'+Number(d.apr||0)+'"></div><div><label>Minimum</label><input type="number" data-debt="'+i+'" data-key="payment" value="'+Number(d.payment||0)+'"></div><div><label>Extra</label><input type="number" data-debt="'+i+'" data-key="extra" value="'+Number(d.extra||0)+'"></div></div></div>').join('');
+  el.querySelectorAll('[data-debt]').forEach(input=>input.addEventListener('input',()=>{
+    const i=Number(input.dataset.debt),k=input.dataset.key;
+    data.debts[i][k]=k==='name'?input.value:(Number(input.value)||0);
+    persist();renderHome();renderBudget();renderPlanner();
+  }));
+  el.querySelectorAll('[data-del-debt]').forEach(btn=>btn.addEventListener('click',()=>{data.debts.splice(Number(btn.dataset.delDebt),1);persist();render();}));
+}
+
+function renderBudget(){
+  document.getElementById('income').value=data.income||'';
+  const el=document.getElementById('expensesList');
+  el.innerHTML=data.expenses.map((e,i)=>'<div class="item"><div class="row"><div><label>Expense</label><input data-exp="'+i+'" data-key="name" value="'+esc(e.name)+'"></div><div><label>Monthly</label><input type="number" data-exp="'+i+'" data-key="amount" value="'+Number(e.amount||0)+'"></div></div><button class="danger" data-del-exp="'+i+'">Delete</button></div>').join('')||'<div class="empty">No regular expenses yet.</div>';
+  el.querySelectorAll('[data-exp]').forEach(input=>input.addEventListener('input',()=>{
+    const i=Number(input.dataset.exp),k=input.dataset.key;
+    data.expenses[i][k]=k==='name'?input.value:(Number(input.value)||0);
+    persist();renderHome();renderBudgetTotals();
+  }));
+  el.querySelectorAll('[data-del-exp]').forEach(btn=>btn.addEventListener('click',()=>{
+    data.expenses.splice(Number(btn.dataset.delExp),1);persist();render();
+  }));
+  renderBudgetTotals();
+}
+function renderBudgetTotals(){
+  const exp=data.expenses.reduce((x,e)=>x+Number(e.amount||0),0);
+  const pay=data.debts.reduce((x,d)=>x+Number(d.payment||0)+Number(d.extra||0),0);
+  document.getElementById('bIncome').textContent=money(data.income);
+  document.getElementById('bExp').textContent=money(exp);
+  document.getElementById('bBefore').textContent=money(Number(data.income||0)-exp);
+  document.getElementById('bAfter').textContent=money(Number(data.income||0)-exp-pay);
+}
+
+function renderPlanner(){
+  const input=document.getElementById('extraPlan');
+  if(document.activeElement!==input) input.value=data.extraPlan||'';
+  updatePlanner();
+}
+function updatePlanner(){
+  const m=monthsFor(data.extraPlan,strategy);
+  document.getElementById('planDate').textContent=finishDate(m);
+  document.getElementById('planMonths').textContent=m?'About '+m+' month'+(m===1?'':'s')+' from now using '+strategy+'.':'Add debt balances and monthly payments first.';
+  const p=data.debts.reduce((x,d)=>x+Number(d.payment||0)+Number(d.extra||0),0)+Number(data.extraPlan||0);
+  document.getElementById('planPayment').textContent=money(p);
+  document.getElementById('avBtn').classList.toggle('on',strategy==='avalanche');
+  document.getElementById('snBtn').classList.toggle('on',strategy==='snowball');
+  document.getElementById('strategyText').textContent=strategy==='avalanche'?'Highest APR first — usually minimises interest.':'Smallest balance first — gives quicker visible wins.';
+}
+
+function renderGoals(){
+  const el=document.getElementById('goalsList');
+  el.innerHTML=data.goals.map((g,i)=>{
+    const p=g.target?Math.min(1,g.saved/g.target):0,rem=Math.max(0,g.target-g.saved);
+    const m=g.monthly>0?Math.ceil(rem/g.monthly):null;
+    return '<div class="item"><div class="itemhead"><div class="itemtitle">'+(esc(g.name)||'New goal')+'</div><button class="danger" data-del-goal="'+i+'">Delete</button></div><label>Goal name</label><input data-goal="'+i+'" data-key="name" value="'+esc(g.name)+'"><div class="row3"><div><label>Target</label><input type="number" data-goal="'+i+'" data-key="target" value="'+Number(g.target||0)+'"></div><div><label>Saved</label><input type="number" data-goal="'+i+'" data-key="saved" value="'+Number(g.saved||0)+'"></div><div><label>Monthly</label><input type="number" data-goal="'+i+'" data-key="monthly" value="'+Number(g.monthly||0)+'"></div></div><div style="margin-top:9px" class="progress"><div style="width:'+(p*100)+'%"></div></div><p class="small">'+Math.round(p*100)+'% complete • '+money(rem)+' remaining'+(m?' • ~'+m+' months':'')+'</p></div>';
+  }).join('')||'<div class="empty">No savings goals yet.</div>';
+  el.querySelectorAll('[data-goal]').forEach(input=>input.addEventListener('input',()=>{
+    const i=Number(input.dataset.goal),k=input.dataset.key;
+    data.goals[i][k]=k==='name'?input.value:(Number(input.value)||0);
+    persist();
+    updateGoalCard(i);
+  }));
+  el.querySelectorAll('[data-del-goal]').forEach(btn=>btn.addEventListener('click',()=>{
+    data.goals.splice(Number(btn.dataset.delGoal),1);persist();renderGoals();
+  }));
+}
+function updateGoalCard(i){
+  const card=document.querySelectorAll('#goalsList .item')[i];
+  if(!card)return;
+  const g=data.goals[i],p=g.target?Math.min(1,g.saved/g.target):0,rem=Math.max(0,g.target-g.saved);
+  const m=g.monthly>0?Math.ceil(rem/g.monthly):null;
+  const title=card.querySelector('.itemtitle'); if(title) title.textContent=g.name||'New goal';
+  const prog=card.querySelector('.progress>div'); if(prog) prog.style.width=(p*100)+'%';
+  const text=card.querySelector('.small'); if(text) text.textContent=Math.round(p*100)+'% complete • '+money(rem)+' remaining'+(m?' • ~'+m+' months':'');
+}
+
+function render(){renderHome();renderDebts();renderBudget();renderPlanner();renderGoals();}
+
+document.getElementById('saveStarting').addEventListener('click',()=>{data.starting=Number(document.getElementById('starting').value)||0;persist();renderHome();});
+document.getElementById('income').addEventListener('input',e=>{data.income=Number(e.target.value)||0;persist();renderHome();renderBudgetTotals();});
+document.getElementById('addDebt').addEventListener('click',()=>{data.debts.push({name:'',balance:0,apr:0,payment:0,extra:0});persist();render();go('debts');});
+document.getElementById('addExpense').addEventListener('click',()=>{data.expenses.push({name:'',amount:0});persist();render();});
+document.getElementById('addGoal').addEventListener('click',()=>{data.goals.push({name:'',target:0,saved:0,monthly:0});persist();render();});
+document.getElementById('extraPlan').addEventListener('input',e=>{data.extraPlan=Number(e.target.value)||0;persist();updatePlanner();});
+document.getElementById('avBtn').addEventListener('click',()=>{strategy='avalanche';renderPlanner();});
+document.getElementById('snBtn').addEventListener('click',()=>{strategy='snowball';renderPlanner();});
+document.getElementById('resetBtn').addEventListener('click',()=>{if(confirm('Delete all Debt Destroyer data on this device?')){localStorage.removeItem(KEY);location.reload();}});
+render();
+</script>
+</body>
+</html>
